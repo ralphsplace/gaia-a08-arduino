@@ -29,7 +29,6 @@
 #include "sensors.hpp"
 #include "indicator.hpp"
 #include "network.hpp"
-#include "uploader.hpp"
 
 // -----------------------
 char stationID[32];
@@ -56,12 +55,17 @@ void setup()
     rgbLedInit();
     ledInit();
     scd4xSensorInit();
+    wifiInit();
+
+    delay(2000);
+
     uploaderInit();
 
-    wifiInit();
-#ifdef CONF_MQTT
+#ifdef CONF_USE_MQTT
+    delay(500);
     mqttInit();
 #endif
+
 #ifdef CONF_USE_WEB_SERVER
     webServerInit();
 #endif

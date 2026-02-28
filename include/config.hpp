@@ -20,7 +20,13 @@
 CONF_USE_WIFI_MANAGER: If defined, the device will use the WiFi manager
 to configure the connection to the WiFi access point.
 */
-// #define CONF_USE_WIFI_MANAGER
+#define CONF_USE_WIFI_MANAGER
+
+#ifndef CONF_USE_WIFI_MANAGER
+// Only needed if the WiFi manager is not used
+#define WIFI_SSID "network-ssid"
+#define WIFI_PASS "network-password"
+#endif
 
 /*
 CONF_USE_WEB_SERVER: If defined, the device will expose an HTTP
@@ -28,27 +34,31 @@ server from which one can get the real-time data.
 */
 #define CONF_USE_WEB_SERVER
 
+/*
+CONF_USE_AQIC: If defined, the device will send data to AQIC..
+*/
+#define CONF_USE_AQIC
+
+#ifdef CONF_USE_AQIC
 // Get your own token from  https://aqicn.org/data-platform/token/
 #define TOKEN "dummy-token-for-test-purpose-only"
-
-#define LATITUDE 28.7501
-#define LONGITUDE 77.1177
-
-#ifndef CONF_USE_WIFI_MANAGER
-// Only needed if the WiFi manager is not used
-#define WIFI_SSID "yourNetworkName"
-#define WIFI_PASS "yourNetworkPassword"
 #endif
 
 // Comment to disable MQTT support in code
-#define CONF_MQTT
+// #define CONF_USE_MQTT
 
-#ifdef CONF_MQTT
-#define MQTT_BROKER_URI ""
+#ifdef CONF_USE_MQTT
+#define MQTT_BROKER_URI "mqtt://thingsboard.cloud"
 #define MQTT_PORT 1883
-#define MQTT_USERNAME ""
-#define MQTT_PASSWORD ""
+#define MQTT_LWT_TOPIC "v1/devices/me/telemetry"
+#define MQTT_USERNAME "mqtt-username"
+#define MQTT_PASSWORD "m"
+#define MQTT_CLIENT_ID "GAIA-A08-CLIENT_ID"
 #endif
+
+// Set GPS coordinates of the station here
+#define LATITUDE 48.756080
+#define LONGITUDE 2.302038
 
 // Set to 2 if you have two PMS sensors connected
 #define NUM_PMS_SENSORS 1

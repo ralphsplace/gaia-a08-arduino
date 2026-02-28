@@ -19,7 +19,7 @@
 #include "sensors.hpp"
 #include "main.hpp"
 
-#ifdef CONF_MQTT
+#ifdef CONF_USE_MQTT
 
 #include <WiFi.h>
 #include <HTTPClient.h>
@@ -58,21 +58,26 @@ void mqttWorker(void *params)
         if (WiFi.status() != WL_CONNECTED)
         {
             Serial.println("Error in WiFi connection");
-            return;
+            vTaskDelay(1000 / portTICK_PERIOD_MS);
+            // skip this iteration and let the outer loop try again
+            continue;
         }
 
         JsonDocument doc;
-        if (!getMinimalSensorData(doc))
+        if (!getFlatMinimalSensorData(doc))
         {
-            return;
+            Serial.println("Failed to getFlatMinimalSensorData");
+            vTaskDelay(500 / portTICK_PERIOD_MS);
+            // skip this iteration and let the outer loop try again
+            continue;
         }
         size_t json_len = measureJson(doc);
         static unsigned char json_body[256]; // expected json len is 225 bytes
         serializeJson(doc, json_body, sizeof(json_body));
 
-        // Serial.printf("Posting: %s with len %d \n", json_body, json_len);
+        Serial.printf("MTQQ Posting: %s with len %d \n", json_body, json_len);
 
-        if (esp_mqtt_client_publish(client, "GAIA/data", (char *)json_body, json_len, 1, 0) == -1)
+        if (esp_mqtt_client_publish(client, MQTT_LWT_TOPIC, (char *)json_body, json_len, 1, 0) == -1)
         {
             Serial.println("Failed to publish data to MQTT Broker");
         }
@@ -84,6 +89,7 @@ void mqttInit()
     esp_mqtt_client_config_t mqtt_cfg = {
         .uri = MQTT_BROKER_URI,
         .port = MQTT_PORT,
+        .client_id = MQTT_CLIENT_ID,
         .username = MQTT_USERNAME,
         .password = MQTT_PASSWORD,
     };

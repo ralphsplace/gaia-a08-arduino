@@ -18,6 +18,8 @@ extern Accumulator<int> pm1, pm25, pm10;
 
 extern bool getSerialisedSensorData(JsonDocument &doc);
 extern bool getMinimalSensorData(JsonDocument &doc);
+extern bool getFlatMinimalSensorData(JsonDocument &doc);
+
 extern bool i2c_initialized;
 
 #endif // _GAIA_SENSORS

@@ -5,10 +5,14 @@
 #include <ArduinoJson.h>
 
 void wifiInit();
-void webServerInit();
 
-#ifdef CONF_MQTT
-void mqttInit();
+extern void uploaderInit();
+
+#ifdef CONF_USE_MQTT
+extern void mqttInit();
+#endif
+#ifdef CONF_USE_WEB_SERVER
+void webServerInit();
 #endif
 
 #endif // _GAIA_NETWORK

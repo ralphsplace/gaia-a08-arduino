@@ -57,6 +57,31 @@ bool getMinimalSensorData(JsonDocument &doc)
     return true;
 }
 
+bool getFlatMinimalSensorData(JsonDocument &doc)
+{
+    if (!pm25.hasData())
+    {
+        return false;
+    }
+
+    doc["id"] = stationID;
+    doc["mac"] = mac;
+
+    doc["latitude"] = LATITUDE;
+    doc["longitude"] = LONGITUDE;
+    doc["pm1"] = pm1.avg();
+    doc["pm25"] = pm25.avg();
+    doc["pm10"] = pm10.avg();
+    doc["temperature"] = temperature.avg();
+    doc["humidity"] = humidity.avg();
+
+    if (co2.hasData())
+    {
+        doc["co2"] = round(co2.avg());
+    }
+    return true;
+}
+
 bool getSerialisedSensorData(JsonDocument &doc)
 {
     if (!pm25.hasData())
@@ -97,6 +122,9 @@ bool getSerialisedSensorData(JsonDocument &doc)
         doc["readings"][4]["unit"] = "ppm";
     }
 
+#ifdef TOKEN
     doc["token"] = TOKEN;
+#endif
+
     return true;
 }
